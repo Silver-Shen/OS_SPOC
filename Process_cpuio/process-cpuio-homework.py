@@ -73,22 +73,44 @@ class scheduler:
     #change to READY STATE, the current proc's state should be expected
     #if pid==-1, then pid=self.curr_proc
     def move_to_ready(self, expected, pid=-1):
-        #YOUR CODE
+        #2013011371
+        if pid == -1:
+            pid = self.curr_proc
+
+        if self.proc_info[pid][PROC_STATE] != expected:
+            return
+        self.proc_info[pid][PROC_STATE] = STATE_READY
         return
 
     #change to RUNNING STATE, the current proc's state should be expected
     def move_to_running(self, expected):
-        #YOUR CODE
+        #2013011371
+        if self.proc_info[self.curr_proc][PROC_STATE] != expected:
+            return
+        self.proc_info[self.curr_proc][PROC_STATE] = STATE_RUNNING
         return
 
     #change to DONE STATE, the current proc's state should be expected
     def move_to_done(self, expected):
-        #YOUR CODE
+        #2013011371
+        if self.proc_info[self.curr_proc][PROC_STATE] != expected:
+            return
+        self.proc_info[self.curr_proc][PROC_STATE] = STATE_DONE
         return
 
     #choose next proc using FIFO/FCFS scheduling, If pid==-1, then pid=self.curr_proc
     def next_proc(self, pid=-1):
-        #YOUR CODE
+        #2013011371
+        if self.get_num_active() == 0:
+            return
+        if pid == -1:
+            pid = self.curr_proc
+
+        self.curr_proc = (pid + 1) % self.get_num_processes()
+        while self.proc_info[self.curr_proc][PROC_STATE] != STATE_READY and pid != self.curr_proc:
+            self.curr_proc = (self.curr_proc + 1) % self.get_num_processes()
+
+        self.move_to_running(STATE_READY)
         return
 
     def get_num_processes(self):
@@ -170,16 +192,20 @@ class scheduler:
             for pid in range(len(self.proc_info)):
                 if clock_tick in self.io_finish_times[pid]:
                     # if IO finished, the should do something for related process
-       	            #YOUR CODE
-                    pass #YOU should delete this
-            
+       	            #2013011371                    
+                    self.move_to_ready(STATE_WAIT, pid)
+                    io_done = True
+
+            if io_done and self.proc_info[self.curr_proc][PROC_STATE] != STATE_RUNNING:
+                self.next_proc()
+
             # if current proc is RUNNING and has an instruction, execute it
             instruction_to_execute = ''
             if self.proc_info[self.curr_proc][PROC_STATE] == STATE_RUNNING and \
                    len(self.proc_info[self.curr_proc][PROC_CODE]) > 0:
                 #pop a instruction from proc_info[self.curr_proc][PROC_CODE]to instruction_to_execute
-                #YOUR CODE
-                pass #YOU should delete this
+                #2013011371
+                instruction_to_execute = self.proc_info[self.curr_proc][PROC_CODE].pop(0)
 
             # OUTPUT: print what everyone is up to
             if io_done:
@@ -194,6 +220,7 @@ class scheduler:
             if instruction_to_execute == '':
                 print '%10s' % ' ',
             else:
+                cpu_busy += 1
                 print '%10s' % 1,
             num_outstanding = self.get_ios_in_flight(clock_tick)
             if num_outstanding > 0:
@@ -206,13 +233,19 @@ class scheduler:
             # if this is an YIELD instruction, switch to ready state
             # and add an io completion in the future
             if instruction_to_execute == DO_YIELD:
-                #YOUR CODE
-                pass #YOU should delete this
+                #2013011371
+                self.move_to_ready(STATE_RUNNING)
+                self.next_proc()
+
             # if this is an IO instruction, switch to waiting state
             # and add an io completion in the future
             elif instruction_to_execute == DO_IO:
-                #YOUR CODE
-                pass #YOU should delete this
+                #2013011371
+                if self.proc_info[self.curr_proc][PROC_STATE] != STATE_RUNNING:
+                    pass
+                self.proc_info[self.curr_proc][PROC_STATE] = STATE_WAIT
+                self.io_finish_times[self.curr_proc].append(clock_tick + self.io_length + 1)
+                self.next_proc()
 
             # ENDCASE: check if currently running thing is out of instructions
             self.check_if_done()
