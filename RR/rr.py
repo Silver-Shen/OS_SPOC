@@ -1,5 +1,11 @@
 import sys
 
+def mean(list):
+    sum = 0.0
+    for i in list:
+        sum = sum + i
+    return sum/len(list)
+
 def input_porc():
     print "please input proc list:"
     input=raw_input()
@@ -53,7 +59,7 @@ def proc_run(proc,time):
     print "Final statistics:"
     for i in range(0,len(proc)):
         print "Job   %d -- Response: %.2f  Turnaround %.2f  Wait %.2f"%(i,response[i],total_cost[i],total_cost[i]-temp_proc[i])
-    #print "Average -- Response: %.2f  Turnaround %.2f  Wait %.2f"%()
+    print "Average -- Response: %.2f  Turnaround %.2f  Wait %.2f"%(mean(response),mean(total_cost),mean(total_cost)-mean(temp_proc))
 
 
 if __name__ == "__main__":
