@@ -14,9 +14,18 @@ def input_porc():
     return proc,time
 
 def proc_run(proc,time):
+    print "ARG policy RR"
     co = 0
     proc_num = len(proc)
+    print "ARG jobs %d"%(proc_num)
     total = 0
+    
+    print "Here is the job list, with the run time of each job: "
+    
+    for i in range(0,proc_num):
+        print "Job %d ( length = %d )"%(i,proc[i])
+    
+    print "** Solutions **"
     while(proc_num > 0):
         for i in range(0,len(proc)):
             if(proc[i] > time):
