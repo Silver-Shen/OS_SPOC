@@ -26,8 +26,17 @@ def proc_run(proc,time):
         print "Job %d ( length = %d )"%(i,proc[i])
     
     print "** Solutions **"
+    total_cost = []
+    response = []
+    temp_proc = []
+    for i in range(0,len(proc)):
+        total_cost.append(-1)
+        response.append(-1)
+        temp_proc.append(proc[i])
     while(proc_num > 0):
         for i in range(0,len(proc)):
+            if(response[i] == -1):
+                response[i] = total
             if(proc[i] > time):
                 total = total + time
                 proc[i] = proc[i] - time
@@ -39,6 +48,12 @@ def proc_run(proc,time):
                 proc[i] = 0
                 proc_num = proc_num - 1
                 co  = co + 1
+                total_cost[i] = total
+                
+    print "Final statistics:"
+    for i in range(0,len(proc)):
+        print "Job   %d -- Response: %.2f  Turnaround %.2f  Wait %.2f"%(i,response[i],total_cost[i],total_cost[i]-temp_proc[i])
+    #print "Average -- Response: %.2f  Turnaround %.2f  Wait %.2f"%()
 
 
 if __name__ == "__main__":
