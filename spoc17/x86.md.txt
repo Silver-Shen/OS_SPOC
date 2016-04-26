@@ -1,0 +1,40 @@
+# x86报告
+
+沈哲言 2013011371 叶子鹏 2013011404
+
+
+### 执行 ./x86.py -p loop.s -t 1 -i 100 -R dx， 请问dx的值是什么？
+
+ -1
+
+### 执行 ./x86.py -p loop.s -t 2 -i 100 -a dx=3,dx=3 -R dx ， 请问dx的值是什么？
+
+-1
+
+### 执行 ./x86.py -p loop.s -t 2 -i 3 -r -a dx=3,dx=3 -R dx， 请问dx的值是什么？
+
+-1  
+
+### 变量x的内存地址为2000, ./x86.py -p looping-race-nolock.s -t 1 -M 2000, 请问变量x的值是什么？ 
+
+1
+
+### 变量x的内存地址为2000, ./x86.py -p looping-race-nolock.s -t 2 -a bx=3 -M 2000, 请问变量x的值是什么？为何每个线程要循环3次？
+
+6; 因为寄存器的值并不共享
+
+### 变量x的内存地址为2000, ./x86.py -p looping-race-nolock.s -t 2 -M 2000 -i 4 -r -s 0， 请问变量x的值是什么？
+
+1或2，取决于后执行的线程是否在第一个线程写回前获得CPU执行权，产生了race condition
+
+### 变量x的内存地址为2000, ./x86.py -p looping-race-nolock.s -t 2 -M 2000 -i 4 -r -s 1， 请问变量x的值是什么？
+
+1或2，取决于后执行的线程是否在第一个线程写回前获得CPU执行权，产生了race condition
+
+### 变量x的内存地址为2000, ./x86.py -p looping-race-nolock.s -t 2 -M 2000 -i 4 -r -s 2， 请问变量x的值是什么？
+
+1或2，取决于后执行的线程是否在第一个线程写回前获得CPU执行权，产生了race condition
+
+### 变量x的内存地址为2000, ./x86.py -p looping-race-nolock.s -a bx=1 -t 2 -M 2000 -i 1， 请问变量x的值是什么？
+
+1, 两个线程同时取出了2000的原始值，故存进去的都是1
